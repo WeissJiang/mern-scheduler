@@ -1,0 +1,32 @@
+const express = require('express');
+const router = express.Router();
+
+const auth = require('../../middleware/auth');
+
+router.get('/', auth.verifyJWT, async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const users = await User.find({}, { password: 0, _id: 0})
+      .sort('lastName')
+      .populate('role', 'username')
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+
+    const count = await User.countDocuments(); // to get total count
+
+    res.status(200).json({
+      users,
+      totalPages: Math.ceil(count / limit),
+      currentPage: Number(page),
+      count
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: 'Your request could not be processed. Please try again.'
+    });
+  }
+});
+
+module.exports = router;
