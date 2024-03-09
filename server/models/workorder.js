@@ -26,6 +26,11 @@ const WorkOrderSchema = new Schema({
         type: String,
         default: "1111100"
     },
+    project: {
+        type: Schema.Types.ObjectId,
+        ref: 'Project',
+        required: true, // only check the value is null or not, can not check the project exists or not
+    },
     updated: Date,
     created: {
         type: Date,
