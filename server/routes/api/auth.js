@@ -63,7 +63,6 @@ router.post('/login', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     try{
-        console.log("register a new user")
         const { email, username, password } = req.body;
 
         if (!email) {
