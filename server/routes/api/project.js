@@ -8,7 +8,7 @@ router.get('/', auth.verifyJWT, async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
         const projectsDoc = await Project.find()
-                                .sort('lastName')
+                                .sort('name')
                                 .limit(limit * 1)
                                 .skip((page - 1) * limit)
                                 .exec();
@@ -54,7 +54,7 @@ router.post('/add', auth.verifyJWT, async (req, res) => {
         if (existingProject) {
             return res
               .status(400)
-              .json({ error: 'Thatproject name is already in use.' });
+              .json({ error: 'That project name is already in use.' });
         }
 
         const project = new Project({
@@ -76,15 +76,22 @@ router.post('/add', auth.verifyJWT, async (req, res) => {
 router.patch('/:id', auth.verifyJWT, async (req, res) => {
     try {
         const id = req.params.id;
+
+        const projectDoc = await Project.findOne({ _id: id});
         
-        const updated = await Project.findOneAndUpdate({ _id: id }, req.body, {
-            new: true
+        if(!projectDoc){
+            res.status(404).json({
+                message: `Cannot find project with the id: ${id}.`,
+            });
+        }
+        
+        await Project.updateOne({ _id: id }, req.body, {
+            insert: true
         }); 
 
         res.status(200).json({
             success: true,
             message: "Your project has been updated successfully!",
-            project: updated
         });
     } catch (error) {
         res.status(400).send(error);
@@ -94,8 +101,6 @@ router.patch('/:id', auth.verifyJWT, async (req, res) => {
 router.delete('/:id', auth.verifyJWT, async (req, res) => {
     try {
         const id = req.params.id;
-
-        // const projectDoc = await Project.findOne({ _id: id});
 
         // const findedJobs = await Job.find({ project: projectDoc.id});
         await Project.deleteOne({ _id: id});
