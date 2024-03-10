@@ -3,7 +3,6 @@ const router = express.Router();
 
 const auth = require('../../middleware/auth');
 const Ticket = require('../../models/ticket');
-const TicketComment = require('../../models/ticketcomment');
 const WorkOrder = require('../../models/workorder');
 const Project = require('../../models/project');
 const User = require('../../models/user');
@@ -242,8 +241,8 @@ router.post('/comment/add', auth.verifyJWT, async (req, res) => {
             });
         }
 
-        const added = new TicketComment(req.body);
-        await added.save();
+        existingTicket.comments.push(req.body);
+        await existingTicket.save();
 
         res.status(200).json({
             success: true,
@@ -254,14 +253,24 @@ router.post('/comment/add', auth.verifyJWT, async (req, res) => {
     }
 })
 
-router.patch('/comment/:id', auth.verifyJWT, async (req, res) => {
+router.patch('/:id/comment/:commentId', auth.verifyJWT, async (req, res) => {
     try {
-        const id = req.params.id;
+        const ticketId = req.params.id;
+        const commentId = req.params.commentId;
 
-        req.body.updated = Date.now();
-        await TicketComment.updateOne({ _id: id }, req.body, {
-            insert: true
-        }); 
+        const { content } = req.body;
+
+        const existingTicket = await Ticket.Ticket.findOne({ _id: ticketId });
+        if (!existingTicket) {
+            res.status(404).json({
+                message: `Cannot find ticket with the id: ${ticketId}.`
+            });
+        }
+
+        const comment = existingTicket.comments.id(commentId);
+        comment.content = content;
+        comment.updated = Date.now();
+        await existingTicket.save();
 
         res.status(200).json({
             success: true,
@@ -273,10 +282,20 @@ router.patch('/comment/:id', auth.verifyJWT, async (req, res) => {
     }
 })
 
-router.delete('/comment/:id', auth.verifyJWT, async (req, res) => {
+router.delete('/:id/comment/:commentId', auth.verifyJWT, async (req, res) => {
     try {
-        const id = req.params.id;
-        await TicketComment.deleteOne({ _id: id });
+        const ticketId = req.params.id;
+        const commentId = req.params.commentId;
+        
+        const existingTicket = await Ticket.Ticket.findOne({ _id: ticketId });
+        if (!existingTicket) {
+            res.status(404).json({
+                message: `Cannot find ticket with the id: ${ticketId}.`
+            });
+        }
+
+        existingTicket.comments = existingTicket.comments.filter(comment => comment._id.toString() !== commentId);
+        await existingTicket.save();
 
         res.status(200).json({
             success: true,
@@ -314,8 +333,8 @@ router.post('/hour/add', auth.verifyJWT, async (req, res) => {
             });
         }
 
-        const added = new Ticket.TicketHour(req.body);
-        await added.save();
+        existingTicket.hours.push(req.body);
+        await existingTicket.save();
 
         res.status(200).json({
             success: true,
@@ -326,14 +345,25 @@ router.post('/hour/add', auth.verifyJWT, async (req, res) => {
     }
 })
 
-router.patch('/hour/:id', auth.verifyJWT, async (req, res) => {
+router.patch('/:id/hour/:hourId', auth.verifyJWT, async (req, res) => {
     try {
-        const id = req.params.id;
+        const ticketId = req.params.id;
+        const hourId = req.params.hourId;
 
-        req.body.updated = Date.now();
-        await Ticket.TicketHour.updateOne({ _id: id }, req.body, {
-            insert: true
-        }); 
+        const { time, note } = req.body;
+
+        const existingTicket = await Ticket.Ticket.findOne({ _id: ticketId });
+        if (!existingTicket) {
+            res.status(404).json({
+                message: `Cannot find ticket with the id: ${ticketId}.`
+            });
+        }
+
+        const hour = existingTicket.hours.id(hourId);
+        hour.time = time;
+        hour.note = note;
+        hour.updated = Date.now();
+        await existingTicket.save();
 
         res.status(200).json({
             success: true,
@@ -345,10 +375,20 @@ router.patch('/hour/:id', auth.verifyJWT, async (req, res) => {
     }
 })
 
-router.delete('/hour/:id', auth.verifyJWT, async (req, res) => {
+router.delete('/:id/hour/:hourId', auth.verifyJWT, async (req, res) => {
     try {
-        const id = req.params.id;
-        await Ticket.TicketHour.deleteOne({ _id: id });
+        const ticketId = req.params.id;
+        const hourId = req.params.hourId;
+        
+        const existingTicket = await Ticket.Ticket.findOne({ _id: ticketId });
+        if (!existingTicket) {
+            res.status(404).json({
+                message: `Cannot find ticket with the id: ${ticketId}.`
+            });
+        }
+
+        existingTicket.hours = existingTicket.hours.filter(hour => hour._id.toString() !== hourId);
+        await existingTicket.save();
 
         res.status(200).json({
             success: true,

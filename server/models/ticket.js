@@ -10,9 +10,14 @@ const TicketHourSchema = new Schema({
     time: {
         type: Number,
     },
+    note: {
+        type: String,
+        default: ""
+    },
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        immutable: true
     },
     updated: Date,
     created: {
@@ -20,6 +25,27 @@ const TicketHourSchema = new Schema({
         default: Date.now
     }
 });
+
+const TicketCommentSchema = new Schema({
+    ticket: {
+        type: Schema.Types.ObjectId,
+        ref: 'Ticket',
+        immutable: true
+    },
+    content: {
+        type: String,
+    },
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        immutable: true
+    },
+    updated: Date,
+    created: {
+        type: Date,
+        default: Date.now
+    }
+})
 
 const TicketSchema = new Schema({
     title: {
@@ -43,7 +69,8 @@ const TicketSchema = new Schema({
         required: true,
         default: 0
     },
-    comments: [TicketHourSchema],
+    comments: [TicketCommentSchema],
+    hours: [TicketHourSchema],
     project: {
         type: Schema.Types.ObjectId,
         ref: 'Project'
@@ -61,5 +88,6 @@ const TicketSchema = new Schema({
 
 module.exports = {
     TicketHour: Mongoose.model('TicketHour', TicketHourSchema),
+    TicketComment: Mongoose.model('TicketComment', TicketCommentSchema),
     Ticket: Mongoose.model('Ticket', TicketSchema)
 };
