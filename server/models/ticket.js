@@ -2,6 +2,11 @@ const Mongoose = require('mongoose');
 const { Schema } = Mongoose;
 
 const TicketHourSchema = new Schema({
+    ticket: {
+        type: Schema.Types.ObjectId,
+        ref: 'Ticket',
+        immutable: true
+    },
     time: {
         type: Number,
     },
@@ -17,17 +22,13 @@ const TicketHourSchema = new Schema({
 });
 
 const TicketSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-        unique: true
-    },
     title: {
         type: String,
         required: true
     },
     description: {
         type: String,
+        default: ""
     },
     assignee: {
         type: Schema.Types.ObjectId,

@@ -1,0 +1,362 @@
+const express = require('express');
+const router = express.Router();
+
+const auth = require('../../middleware/auth');
+const Ticket = require('../../models/ticket');
+const TicketComment = require('../../models/ticketcomment');
+const WorkOrder = require('../../models/workorder');
+const Project = require('../../models/project');
+const User = require('../../models/user');
+
+/**
+ * ticket crud
+ */
+router.get('/', auth.verifyJWT, async (req, res) => {
+    try {
+        const { page = 1, limit = 10 } = req.query;
+        const ticketsDoc = await Ticket.Ticket.find()
+                                .sort('-created')
+                                .limit(limit * 1)
+                                .skip((page - 1) * limit)
+                                .exec();
+
+        const count = await Ticket.Ticket.countDocuments(); 
+
+        res.status(200).json({
+            tickets: ticketsDoc,
+            totalPages: Math.ceil(count / limit),
+            currentPage: Number(page),
+            count
+        });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+router.get('/:id', auth.verifyJWT, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const ticketDoc = await Ticket.Ticket.findOne({ _id: id})
+                                                .populate('comments');
+
+        if (!ticketDoc) {
+            res.status(404).json({
+                message: `Cannot find ticket with the id: ${id}.`
+            });
+        }
+
+        res.status(200).json({
+            ticket: ticketDoc
+        });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+router.post('/add', auth.verifyJWT, async (req, res) => {
+    try {
+        const {
+            title, 
+            description,
+            assignee,
+            supervisor,
+            estimate,
+            project, 
+            workOrder
+        } = req.body;
+
+        if(!title ){
+            res.status(400).json({
+                message: `Title is required.`,
+            });
+        }
+
+        const existingAssignee = await User.findOne({ _id: assignee});
+        const existingSupervisor = await User.findOne({ _id: supervisor});
+
+        if (!existingAssignee) {
+            res.status(404).json({
+                message: `Cannot find user with the id: ${assignee}.`
+            });
+        }
+
+        if (!existingSupervisor) {
+            res.status(404).json({
+                message: `Cannot find user with the id: ${supervisor}.`
+            });
+        }
+
+        if (project) {
+            const existingProject = await Project.findOne({ _id: project});
+
+            if (!existingProject) {
+                res.status(404).json({
+                    message: `Cannot find project with the id: ${project}.`
+                });
+            }
+        }
+
+        if (workOrder) {
+            const existingWO = await WorkOrder.findOne({ _id: workOrder});
+
+            if (!existingWO) {
+                res.status(404).json({
+                    message: `Cannot find work order with the id: ${workOrder}.`
+                });
+            }
+        }
+
+        const added = new Ticket.Ticket({
+            title, 
+            description,
+            assignee,
+            supervisor,
+            estimate,
+            project, 
+            workOrder
+        })
+
+        await added.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Your ticket has been added successfully!",
+        });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+router.patch('/:id', auth.verifyJWT, async (req, res) => {
+    try {
+        const id = req.params.id;
+        
+        const ticketDoc = await Ticket.Ticket.findOne({ _id: id});
+
+        if(!ticketDoc){
+            res.status(404).json({
+                message: `Cannot find ticket with the id: ${id}.`,
+            });
+        }
+
+        const {
+            assignee,
+            supervisor,
+            project, 
+            workOrder
+        } = req.body;
+
+        if (assignee) {
+            const existingAssignee = await User.findOne({ _id: assignee});
+            if (!existingAssignee) {
+                res.status(404).json({
+                    message: `Cannot find user with the id: ${assignee}.`
+                });
+            }
+        }
+
+        if (supervisor) {
+            const existingSupervisor = await User.findOne({ _id: supervisor});
+            if (!existingSupervisor) {
+                res.status(404).json({
+                    message: `Cannot find user with the id: ${supervisor}.`
+                });
+            }
+        }
+
+        if (project) {
+            const existingProject = await Project.findOne({ _id: project});
+
+            if (!existingProject) {
+                res.status(404).json({
+                    message: `Cannot find project with the id: ${project}.`
+                });
+            }
+        }
+
+        if (workOrder) {
+            const existingWO = await WorkOrder.findOne({ _id: workOrder});
+
+            if (!existingWO) {
+                res.status(404).json({
+                    message: `Cannot find work order with the id: ${workOrder}.`
+                });
+            }
+        }
+    
+        req.body.updated = Date.now();
+
+        await Ticket.Ticket.updateOne({ _id: id }, req.body, {
+            insert: true
+        }); 
+
+        res.status(200).json({
+            success: true,
+            message: "Your ticket has been updated successfully!",
+        });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+router.delete('/:id', auth.verifyJWT, async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        await Ticket.Ticket.deleteOne({ _id: id});
+
+        res.status(200).json({
+            success: true,
+            message: "Your ticket has been deleted successfully!",
+        });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+
+/**
+ * ticket comment crud
+ */
+router.post('/comment/add', auth.verifyJWT, async (req, res) => {
+    try {
+        const { ticket, content, author } = req.body;
+
+        if (!ticket || !content || !author) {
+            res.status(400).json({
+                message: `ticket, content, and author are required.`,
+            });
+        }
+
+        const existingTicket = await Ticket.Ticket.findOne({ _id: ticket });
+        if (!existingTicket) {
+            res.status(404).json({
+                message: `Cannot find ticket with the id: ${ticket}.`
+            });
+        }
+
+        const existingAuthor = await User.findOne({ _id: author });
+        if (!existingAuthor) {
+            res.status(404).json({
+                message: `Cannot find user with the id: ${author}.`
+            });
+        }
+
+        const added = new TicketComment(req.body);
+        await added.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Your ticket comment has been added successfully!",
+        });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+router.patch('/comment/:id', auth.verifyJWT, async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        req.body.updated = Date.now();
+        await TicketComment.updateOne({ _id: id }, req.body, {
+            insert: true
+        }); 
+
+        res.status(200).json({
+            success: true,
+            message: "Your ticket comment has been updated successfully!",
+        });
+
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+router.delete('/comment/:id', auth.verifyJWT, async (req, res) => {
+    try {
+        const id = req.params.id;
+        await TicketComment.deleteOne({ _id: id });
+
+        res.status(200).json({
+            success: true,
+            message: "Your ticket comment has been deleted successfully!",
+        });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+/**
+ * ticket hours crud
+ */
+router.post('/hour/add', auth.verifyJWT, async (req, res) => {
+    try {
+        const { ticket, time, user } = req.body;
+
+        if (!ticket || !time || !user) {
+            res.status(400).json({
+                message: `ticket, time, and user are required.`,
+            });
+        }
+
+        const existingTicket = await Ticket.Ticket.findOne({ _id: ticket });
+        if (!existingTicket) {
+            res.status(404).json({
+                message: `Cannot find ticket with the id: ${ticket}.`
+            });
+        }
+
+        const existingUser = await User.findOne({ _id: user });
+        if (!existingUser) {
+            res.status(404).json({
+                message: `Cannot find user with the id: ${user}.`
+            });
+        }
+
+        const added = new Ticket.TicketHour(req.body);
+        await added.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Your ticket hour has been added successfully!",
+        });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+router.patch('/hour/:id', auth.verifyJWT, async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        req.body.updated = Date.now();
+        await Ticket.TicketHour.updateOne({ _id: id }, req.body, {
+            insert: true
+        }); 
+
+        res.status(200).json({
+            success: true,
+            message: "Your ticket hour has been updated successfully!",
+        });
+
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+router.delete('/hour/:id', auth.verifyJWT, async (req, res) => {
+    try {
+        const id = req.params.id;
+        await Ticket.TicketHour.deleteOne({ _id: id });
+
+        res.status(200).json({
+            success: true,
+            message: "Your ticket hour has been deleted successfully!",
+        });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
+module.exports = router;

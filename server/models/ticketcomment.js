@@ -4,7 +4,8 @@ const { Schema } = Mongoose;
 const TicketCommentSchema = new Schema({
     ticket: {
         type: Schema.Types.ObjectId,
-        ref: 'Ticket'
+        ref: 'Ticket',
+        immutable: true
     },
     content: {
         type: String,
