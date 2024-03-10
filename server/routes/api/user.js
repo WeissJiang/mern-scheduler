@@ -8,7 +8,7 @@ router.get('/', auth.verifyJWT, async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
 
-    const usersDoc = await User.find({}, { password: 0, _id: 0})
+    const usersDoc = await User.find({}, { password: 0 })
                             .sort('lastName')
                             .limit(limit * 1)
                             .skip((page - 1) * limit)

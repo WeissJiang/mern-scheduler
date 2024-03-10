@@ -72,12 +72,11 @@ router.post('/add', auth.verifyJWT, async (req, res) => {
             project
         })
 
-        const workOrderDoc = await added.save();
+        await added.save();
 
         res.status(200).json({
             success: true,
             message: "Your work order has been added successfully!",
-            workorder: workOrderDoc
         });
     } catch (error) {
         res.status(400).send(error);
@@ -96,6 +95,7 @@ router.patch('/:id', auth.verifyJWT, async (req, res) => {
             });
         }
     
+        req.body.updated = Date.now();
         await WorkOrder.updateOne({ _id: id }, req.body, {
             insert: true
         }); 

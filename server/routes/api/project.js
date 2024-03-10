@@ -61,12 +61,11 @@ router.post('/add', auth.verifyJWT, async (req, res) => {
             name
         })
 
-        const projectDoc = await project.save();
+        await project.save();
 
         res.status(200).json({
             success: true,
             message: "Your project has been added successfully!",
-            project: projectDoc
         });
     } catch (error) {
         res.status(400).send(error);
@@ -85,6 +84,7 @@ router.patch('/:id', auth.verifyJWT, async (req, res) => {
             });
         }
         
+        req.body.updated = Date.now();
         await Project.updateOne({ _id: id }, req.body, {
             insert: true
         }); 
