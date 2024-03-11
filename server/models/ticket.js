@@ -56,6 +56,10 @@ const TicketSchema = new Schema({
         type: String,
         default: ""
     },
+    story: {
+        type: Schema.Types.ObjectId,
+        ref: 'Story'
+    },
     assignee: {
         type: Schema.Types.ObjectId,
         ref: 'User'

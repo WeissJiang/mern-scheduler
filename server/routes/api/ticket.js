@@ -10,7 +10,7 @@ const User = require('../../models/user');
 /**
  * ticket crud
  */
-router.get('/', auth.verifyJWT, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
         const ticketsDoc = await Ticket.Ticket.find()
@@ -22,7 +22,7 @@ router.get('/', auth.verifyJWT, async (req, res) => {
         const count = await Ticket.Ticket.countDocuments(); 
 
         res.status(200).json({
-            tickets: ticketsDoc,
+            data: ticketsDoc,
             totalPages: Math.ceil(count / limit),
             currentPage: Number(page),
             count
@@ -45,7 +45,7 @@ router.get('/:id', auth.verifyJWT, async (req, res) => {
         }
 
         res.status(200).json({
-            ticket: ticketDoc
+            data: ticketDoc
         });
     } catch (error) {
         res.status(400).send(error);
@@ -59,6 +59,7 @@ router.post('/add', auth.verifyJWT, async (req, res) => {
             description,
             assignee,
             supervisor,
+            story,
             estimate,
             project, 
             workOrder
@@ -112,7 +113,8 @@ router.post('/add', auth.verifyJWT, async (req, res) => {
             supervisor,
             estimate,
             project, 
-            workOrder
+            workOrder,
+            story
         })
 
         await added.save();

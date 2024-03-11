@@ -17,7 +17,7 @@ router.get('/', auth.verifyJWT, async (req, res) => {
     const count = await User.countDocuments(); // to get total count
 
     res.status(200).json({
-      users: usersDoc,
+      data: usersDoc,
       totalPages: Math.ceil(count / limit),
       currentPage: Number(page),
       count

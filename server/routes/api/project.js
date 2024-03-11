@@ -16,7 +16,7 @@ router.get('/', auth.verifyJWT, async (req, res) => {
         const count = await Project.countDocuments(); 
 
         res.status(200).json({
-            projects: projectsDoc,
+            data: projectsDoc,
             totalPages: Math.ceil(count / limit),
             currentPage: Number(page),
             count
@@ -38,7 +38,7 @@ router.get('/:id', auth.verifyJWT, async (req, res) => {
         }
 
         res.status(200).json({
-            project: projectDoc
+            data: projectDoc
         });
     } catch (error) {
         res.status(400).send(error);
