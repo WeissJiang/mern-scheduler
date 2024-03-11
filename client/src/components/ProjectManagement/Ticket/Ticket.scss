@@ -1,0 +1,17 @@
+.container {
+    margin: 10px 0;
+
+    .story-list {
+        display: flex;
+        overflow-x: scroll;
+        gap: 20px;
+        width: calc(100vw - 275px);;
+        justify-content: space-between;
+
+        .story {
+            background-color: #1c83a5;
+            width: 360px;
+            min-height: 400px;
+        }
+    }
+}
