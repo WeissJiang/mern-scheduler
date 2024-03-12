@@ -4,7 +4,7 @@ const router = express.Router();
 const auth = require('../../middleware/auth');
 const Story = require('../../models/story');
 
-router.get('/', async (req, res) => {
+router.get('/', auth.verifyJWT, async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
         const storiesDoc = await Story.find()

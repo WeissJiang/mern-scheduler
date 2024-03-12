@@ -10,7 +10,7 @@ const User = require('../../models/user');
 /**
  * ticket crud
  */
-router.get('/', async (req, res) => {
+router.get('/', auth.verifyJWT, async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
         const ticketsDoc = await Ticket.Ticket.find()

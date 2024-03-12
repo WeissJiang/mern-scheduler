@@ -1,9 +1,12 @@
-import { useState, useEffect, useCallback  } from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useState, useEffect  } from 'react';
 import './Ticket.scss';
 // import Loader from '../../Common/loader'
 import Story from './Story';
+import Chat from './Chat';
+import NormalSpinner from '../../Common/NormalSpinner';
+import { getStories, getTickets } from '../../../actions/ticket/action';
+import { useDispatch, useSelector } from 'react-redux';
+import { storeTickets, getTicketById } from '../../../store/tickets/action';
 
 export default function TicketDashboard() {
   const [state, setState] = useState({
@@ -17,85 +20,85 @@ export default function TicketDashboard() {
     loadingTicket: true
   });
 
-  const params = useParams();
-
-  const getTickets = useCallback(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/ticket`)
-          .then((res) => {
-            setState(prevState => ({
-              ...prevState,
-              tickets: res.data.data,
-              err: '',
-              loadingTicket: false
-            }));
-          })
-          .catch((err) => {
-            setState(prevState => ({
-              ...prevState,
-              loadingTicket: !err.response,
-              err: err
-            }));
-          });
-  }, []);
-
-  const getStoryDetails = useCallback(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/story`)
-          .then((r) => {
-              setState(prevState => ({
-                  ...prevState,
-                  stories: r.data.data,
-                  err2: '',
-                  loadingStory: false
-              }));
-          })
-          .catch((e) => {
-              setState(prevState => ({
-                  ...prevState,
-                  loadingStory: false,
-                  err2: e
-              }));
-          });
-  }, []);
+  const dispatch = useDispatch();
+  const tickets = useSelector(state => state.tickets.tickets);
 
   useEffect(() => {
-    getStoryDetails();
-    getTickets();
-  }, [getTickets, getStoryDetails, params.id]);
+    getStories()
+      .then(data => {
+        setState(prevState => ({
+          ...prevState,
+          stories: data.data,
+          error: '',
+          loadingStory: false,
+        }));
+      })
+      .catch(error => {
+        setState(prevState => ({
+          ...prevState,
+          loadingStory: false,
+          error: error.toString(),
+        }));
+      });
 
-  // let { stories, loadingStory } = state;
-  // let storyTable;
+      getTickets()
+      .then(data => {
+        dispatch(storeTickets(data.data));
+        setState(prevState => ({
+          ...prevState,
+          tickets: data.data,
+          error: '',
+          loadingTicket: false,
+        }));
+      })
+      .catch(error => {
+        setState(prevState => ({
+          ...prevState,
+          loadingTicket: false,
+          error: error.toString(),
+        }));
+      });
+  }, []);
 
-  // if(!loadingStory){
-  //   storyTable = stories.map((story, index) => (
-  //       <li key={index}>
-  //         <Link to={`/story/${story.storyId}`} activeClassName="active">
-  //           <i className="fas fa-list-alt"></i>
-  //           <span className="menu-text">{story.title}</span>
-  //         </Link>
-  //       </li>
-  //   ));
-  // } else {
-  //   storyTable = (
-  //     <li>
-  //       <div className="loader">
-  //         <Loader />
-  //       </div>
-  //     </li>
-  //   );
-  // }
+  const mappedStories = state.stories.map(story => {
+    const storyTickets = state.tickets.filter(ticket => ticket.story === story._id);
+    story.tickets = storyTickets
+    return story;
+  })
 
   return (
     <>
-      <div>
-        <div>
-          <aside>
-            <Story 
-              stories={state.stories}
-              tickets={state.tickets} 
-              loadingStory={state.loadingStory}
-              loadingTicket={state.loadingTicket}
-            />
-          </aside>
+      <div className='dashboard'>
+        <div className='left-section'>
+          <div className='story-constainer'>
+            <div className='legend'>Under Development</div>
+
+            
+            { 
+              state.loadingStory
+              ? <NormalSpinner color="#1c83a5" />
+              : <div className='story-scroller'>
+                  {
+                    mappedStories.length === 0
+                    ? <div> There is no stories</div>
+                    : mappedStories.map(story => (
+                          <Story
+                            key={story._id}
+                            story={story}
+                          ></Story>
+                      ))
+                  }
+                </div>
+            }
+
+
+            <div>Under Development</div>
+          </div>
+        </div>
+
+
+        <div className='right-section'>
+          <Chat />
         </div>
       </div>
     </>

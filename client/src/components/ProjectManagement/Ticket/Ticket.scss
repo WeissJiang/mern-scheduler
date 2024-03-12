@@ -1,17 +1,62 @@
-.container {
-    margin: 10px 0;
+@import '../../../App.scss';
 
-    .story-list {
-        display: flex;
-        overflow-x: scroll;
-        gap: 20px;
-        width: calc(100vw - 275px);;
-        justify-content: space-between;
+.dashboard {
+    margin: 10px;
+    display: flex;
+    gap: 10px;
+    
+    .left-section {
+        width: 70%;
+        border: 3px dotted var(--cloud-blue);
+    }
 
-        .story {
-            background-color: #1c83a5;
-            width: 360px;
-            min-height: 400px;
+    .right-section {
+        width: 30%;
+        border: 3px dotted var(--cloud-blue);
+    }
+}
+
+.story-constainer {
+    width: 100%;
+
+    .story-scroller{
+        // background-color: #333;
+        
+        overflow: auto;
+        white-space: nowrap;
+        gap: 10px;
+        padding: 14px 0;
+
+        .story{
+            width: 300px;
+            min-height: 200px;
+            display: inline-block;
+            color: var(--cloud-black);
+            text-align: center;
+            padding: 14px;
+            text-decoration: none;
+            margin: 6px;
+            border: 1px solid var(--cloud-black);;
+            border-radius: 0 0 4px 4px;
+            display: inline-table;
+            box-shadow: 0px 3px 5px #bababa7d;
+
+            .hover-story-title{
+                transform: translate(0, -34px);
+                font-size: 24px;
+                font-weight: 600;
+                width: fit-content;
+                margin: auto;
+                padding: 0 6px;
+                background: white;
+            }
         }
     }
+}
+
+
+.ticket-container {
+    width: 280px;
+    border: 1px dotted var(--cloud-blue);
+    margin: 6px 0;
 }
