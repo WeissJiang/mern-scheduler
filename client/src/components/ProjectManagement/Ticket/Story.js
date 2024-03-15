@@ -11,7 +11,8 @@ export default function Story(props) {
     accept: 'TICKET',
     drop: (item, monitor) => {
       console.log(`Ticket ${item.id} dropped into story ${story._id}`);
-      if(window.confirm(`Are you sure you want to move ${item.title} to ${story.name}`)){
+      
+      if(item.story !== story._id && window.confirm(`Are you sure you want to move ${item.title} to ${story.name}`)){
         
         const updated = {
           story: story._id

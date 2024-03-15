@@ -5,8 +5,6 @@ import Story from './Story';
 import Chat from './Chat';
 import NormalSpinner from '../../Common/NormalSpinner';
 import { getStories, getTickets } from '../../../actions/ticket/action';
-import { useDispatch, useSelector } from 'react-redux';
-import { storeTickets, getTicketById } from '../../../store/tickets/action';
 
 export default function TicketDashboard() {
   const [state, setState] = useState({
@@ -19,9 +17,6 @@ export default function TicketDashboard() {
     loadingStory: true,
     loadingTicket: true
   });
-
-  const dispatch = useDispatch();
-  const tickets = useSelector(state => state.tickets.tickets);
 
   useEffect(() => {
     getStories()
@@ -43,7 +38,6 @@ export default function TicketDashboard() {
 
       getTickets()
       .then(data => {
-        dispatch(storeTickets(data.data));
         setState(prevState => ({
           ...prevState,
           tickets: data.data,
