@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiBaseUrl = process.env.REACT_APP_API_URL;
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZTgyNjBlODhiMTcyNzNjNTJhNzcwMyIsImlhdCI6MTcxMDIzMzIwMCwiZXhwIjoxNzEwMjc2NDAwfQ.EmNQpSsb6lOh7y6LEFAliD_pRhs3WQS4WarBm9592g8';
+const token = '';
 
 const apiInstance = axios.create({
     baseURL: apiBaseUrl,
