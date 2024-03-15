@@ -44,7 +44,8 @@ export default function Ticket(props) {
                 toggle={tooltipToggle}
             >
                 <div className='custom-tooltip'>
-                    {`${ticket.title}`} <br/> {`- Drag to change story`} <br/> {`- Click to open detail`}
+                    - Drag to change story <br/>
+                    - Click to open detail`
                 </div>
             </Tooltip>
         </>
