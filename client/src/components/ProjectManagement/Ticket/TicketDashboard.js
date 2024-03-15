@@ -1,64 +1,40 @@
-import { useState, useEffect  } from 'react';
+import { useEffect, useMemo } from 'react';
 import './Ticket.scss';
-// import Loader from '../../Common/loader'
 import Story from './Story';
-import Chat from './Chat';
+import ChatPanel from './ChatPanel';
 import NormalSpinner from '../../Common/NormalSpinner';
-import { getStories, getTickets } from '../../../actions/ticket/action';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectAllTickets, fetchTickets } from '../../../store/tickets/action'
+import { selectAllStories, fetchStories } from '../../../store/stories/action'
+
 
 export default function TicketDashboard() {
-  const [state, setState] = useState({
-    open: false,
-    show: true,
-    tickets: [],
-    stories: [],
-    err: '',
-    err2: '',
-    loadingStory: true,
-    loadingTicket: true
-  });
+
+  const dispatch = useDispatch();
+  const stories = useSelector(selectAllStories);
+  const storyStatus = useSelector(state => state.stories.status);
+  const tickets = useSelector(selectAllTickets);
+  const ticketStatus = useSelector(state => state.tickets.status);
+
+  const loadingStory = storyStatus === 'loading';
+  const loadingTicket = ticketStatus === 'loading';
 
   useEffect(() => {
-    getStories()
-      .then(data => {
-        setState(prevState => ({
-          ...prevState,
-          stories: data.data,
-          error: '',
-          loadingStory: false,
-        }));
-      })
-      .catch(error => {
-        setState(prevState => ({
-          ...prevState,
-          loadingStory: false,
-          error: error.toString(),
-        }));
-      });
 
-      getTickets()
-      .then(data => {
-        setState(prevState => ({
-          ...prevState,
-          tickets: data.data,
-          error: '',
-          loadingTicket: false,
-        }));
-      })
-      .catch(error => {
-        setState(prevState => ({
-          ...prevState,
-          loadingTicket: false,
-          error: error.toString(),
-        }));
-      });
-  }, []);
+      if (storyStatus === 'idle') {
+        dispatch(fetchStories())
+      }
+      if (ticketStatus === 'idle') {
+        dispatch(fetchTickets());
+      }
+  }, [storyStatus, ticketStatus, dispatch]);
 
-  const mappedStories = state.stories.map(story => {
-    const storyTickets = state.tickets.filter(ticket => ticket.story === story._id);
-    story.tickets = storyTickets
-    return story;
-  })
+  const mappedStories = useMemo(() => {
+    return stories.map(story => {
+      const storyTickets = tickets.filter(ticket => ticket.story === story._id);
+      return { ...story, tickets: storyTickets };
+    });
+  }, [stories, tickets]); 
 
   return (
     <>
@@ -69,7 +45,7 @@ export default function TicketDashboard() {
 
             
             { 
-              state.loadingStory
+              loadingStory
               ? <NormalSpinner color="#1c83a5" />
               : <div className='story-scroller'>
                   {
@@ -79,6 +55,7 @@ export default function TicketDashboard() {
                           <Story
                             key={story._id}
                             story={story}
+                            loadingTicket={loadingTicket}
                           ></Story>
                       ))
                   }
@@ -92,7 +69,7 @@ export default function TicketDashboard() {
 
 
         <div className='right-section'>
-          <Chat />
+          <ChatPanel />
         </div>
       </div>
     </>
