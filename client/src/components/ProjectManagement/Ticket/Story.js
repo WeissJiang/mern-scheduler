@@ -2,9 +2,12 @@ import './Ticket.scss';
 import NormalSpinner from '../../Common/NormalSpinner';
 import Ticket from './Ticket';
 import { useDrop } from 'react-dnd';
-import { updateTicket } from '../../../actions/ticket/action';
+import { useDispatch } from 'react-redux';
+import { updateTicket } from '../../../store/tickets/action';
+import { Toast, ToastHeader, ToastBody } from 'reactstrap';
 
 export default function Story(props) {
+  const dispatch = useDispatch();
   const { story } = props;
 
   const [, dropRef] = useDrop(() => ({
@@ -14,17 +17,17 @@ export default function Story(props) {
       
       if(item.story !== story._id && window.confirm(`Are you sure you want to move ${item.title} to ${story.name}`)){
         
-        const updated = {
+        const data = {
           story: story._id
         }
 
-        updateTicket(item.id, updated)
-        .then(() => {
-          alert("updated!")
-        })
-        .catch((e) => {
-          alert(e)
-        });
+        dispatch(updateTicket({id: item.id, data}))
+          .then(() => {
+            alert("updated!")
+          })
+          .catch((e) => {
+            alert(e)
+          });
       }
     },
   }));
@@ -49,6 +52,16 @@ export default function Story(props) {
                 ))
             )
         }
+        <div className="p-3 bg-primary my-2 rounded">
+          <Toast>
+            <ToastHeader>
+              Reactstrap
+            </ToastHeader>
+            <ToastBody>
+              This is a toast on a primary background — check it out!
+            </ToastBody>
+          </Toast>
+        </div>
       </div>
   )
 }
