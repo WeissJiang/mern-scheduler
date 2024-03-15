@@ -66,9 +66,10 @@ router.post('/add', auth.verifyJWT, async (req, res) => {
             order
         })
 
-        await added.save();
+        const newDoc = await added.save();
 
         res.status(200).json({
+            data: newDoc,
             success: true,
             message: "Your story has been added successfully!",
         });
@@ -94,7 +95,16 @@ router.patch('/:id', auth.verifyJWT, async (req, res) => {
             insert: true
         }); 
 
+        const updatedDoc = await Story.findOne({ _id: id});
+
+        if (!updatedDoc) {
+            res.status(404).json({
+                message: `Cannot find story with the id: ${id}.`
+            });
+        }
+
         res.status(200).json({
+            data: updatedDoc,
             success: true,
             message: "Your story has been updated successfully!",
         });

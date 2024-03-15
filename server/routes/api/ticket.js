@@ -117,9 +117,10 @@ router.post('/add', auth.verifyJWT, async (req, res) => {
             story
         })
 
-        await added.save();
+        const newDoc = await added.save();
 
         res.status(200).json({
+            data: newDoc,
             success: true,
             message: "Your ticket has been added successfully!",
         });
@@ -191,7 +192,16 @@ router.patch('/:id', auth.verifyJWT, async (req, res) => {
             insert: true
         }); 
 
+        const updatedDoc = await Ticket.Ticket.findOne({ _id: id});
+
+        if (!updatedDoc) {
+            res.status(404).json({
+                message: `Cannot find ticket with the id: ${id}.`
+            });
+        }
+
         res.status(200).json({
+            data: updatedDoc,
             success: true,
             message: "Your ticket has been updated successfully!",
         });
