@@ -1,0 +1,151 @@
+@import '../../App.scss';
+
+@property --a {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+@keyframes rotating {
+    0% {
+        --a:0deg;
+    }
+    100% {
+        --a:360deg;
+    }
+}
+
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url(../../assets/images/nishuihan-daytime-resized.jpg) no-repeat;
+    background-size: cover;
+
+    .box {
+        position: relative;
+        width: 400px;
+        height: 200px;
+        background: repeating-conic-gradient(from var(--a), var(--cloud-gold) 0%, var(--cloud-gold) 5%, transparent 5%,transparent 40%, var(--cloud-gold) 50%);
+        filter: drop-shadow(0 15px 50px #000);
+        border-radius: 20px;
+        animation: rotating 4s linear infinite;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: 0.7s;
+
+        .login {
+            position: absolute;
+            inset: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border-radius: 10px;
+            background: url(../../assets/images/nishuihan-night-snap-2.jpg) no-repeat;
+            background-size: cover;
+            z-index: 1000;
+            box-shadow: inset 0 10px 20px rgba(247, 155, 180, 0.6);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.9);
+            color: var(--cloud-white);
+            overflow: hidden;
+
+            .loginBx {
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 20px;
+                width: 75%;
+                transition: 0.7s;
+                transform: translateY(130px);
+                
+                h2 {
+                    text-transform: uppercase;
+                    letter-spacing: 0.3em;
+                    text-shadow: 2px 1px 4px var(--cloud-white);
+                }
+
+                input {
+                    width: 100%;
+                    padding: 10px 20px;
+                    outline: none;
+                    border: none;
+                    color: var(--cloud-blue);
+                    background-color: rgba(255, 255, 255, 0.2);
+                    border: 3px solid var(--cloud-blue);
+                    border-radius: 30px;
+                }
+
+                input::placeholder {
+                    color: var(--cloud-gold);
+                }
+
+                input[type="submit"] {
+                    background-color: var(--cloud-blue);
+                    color: var(--cloud-gold);
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: 0.7s;
+                }
+
+                input[type="submit"]:hover {
+                    box-shadow: 0 0 10px var(--cloud-blue), 0 0 60px var(--cloud-blue);
+                }
+
+                .group {
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+
+                    a {
+                        color: var(--cloud-white);
+                        text-decoration: none;
+                    }
+
+                    a:nth-child(2) {
+                        color: var(--cloud-gold);
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+    }
+
+    .box:hover {
+        width: 400px;
+        height: 450px;
+
+        .loginBx {
+            transform: translateY(0px);
+        }
+    }
+
+    .box::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: repeating-conic-gradient(from var(--a), var(--cloud-blue) 0%, var(--cloud-blue) 5%, transparent 5%,transparent 40%, var(--cloud-blue) 50%);
+        filter: drop-shadow(0 15px 50px #000);
+        border-radius: 20px;
+        animation: rotating 4s linear infinite;
+        animation-delay: -2s;
+    }
+
+    .box::after {
+        content: '';
+        position: absolute;
+        inset: 6px;
+        background: url(../../assets/images/nishuihan-night-snap-1.jpg) no-repeat;
+        background-size: cover;
+        border-radius: 15px;
+        border: 8px solid rgba(247, 155, 180, 0.4);
+    }
+
+    .box:hover .login {
+        inset: 40px;
+    }
+}

@@ -13,6 +13,8 @@ import GameOne from './components/Games/GameOne'
 import Timer from './components/Utility/Timer'
 import Pinata from './components/Pinata/Pinata'
 
+import Login from './components/Login/Login'
+
 
 function App() {
   return (
@@ -31,6 +33,7 @@ function App() {
           <Route path="/utility/timer" element={<Timer />} />
           <Route path="/games/game-one" element={<GameOne />} />
         </Route>
+        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   )
