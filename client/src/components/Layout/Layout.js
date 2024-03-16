@@ -4,9 +4,13 @@ import {
   CloseOutlined,
 } from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu, theme, Button } from 'antd';
-import { Outlet, useNavigate } from 'react-router-dom'
-import Logo from '../../assets/images/cute.jpg'
-import './Layout.scss'
+import { Outlet, useNavigate } from 'react-router-dom';
+import Logo from '../../assets/images/cute.jpg';
+import './Layout.scss';
+import Toast from '../Common/Toast';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../store/auth/action';
+
 
 const App = () => {
   const {
@@ -154,6 +158,21 @@ const App = () => {
     setShowVerticalNav((showVerticalNav) => !showVerticalNav)
   };
 
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    if(window.confirm("Log Out?")){
+      try {
+        dispatch(logout());
+        navigate('/login');
+        console.log("lougged out")
+      }
+      catch(e) {
+          console.log(e);
+      };
+
+    }
+  }
+
   return (
     <Layout>
       <Header>
@@ -175,6 +194,9 @@ const App = () => {
         <Button className='ghost-button' ghost onClick={toggleCollapsed}>
           {collapsed ? <CloseOutlined /> : <UnorderedListOutlined />}
         </Button>
+        <div className='logout' onClick={handleLogout}>
+          <i className="fa-solid fa-right-from-bracket"></i>
+        </div>
       </Header>
       <section>
         { showVerticalNav
@@ -196,6 +218,7 @@ const App = () => {
         
       </section>
       <Layout>
+        <Toast/>
         <Sider
           collapsible
           width={200}
