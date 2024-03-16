@@ -2,12 +2,12 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const apiBaseUrl = process.env.REACT_APP_API_URL;
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZTgyNjBlODhiMTcyNzNjNTJhNzcwMyIsImlhdCI6MTcxMDQ4NjMzNywiZXhwIjoxNzEwNTI5NTM3fQ.XAvNsuM0jjHyxV1HgII6Rt1mVPe0ntOSXevqIMwMNUM';
+const token = localStorage.getItem('token');
 
 const apiInstance = axios.create({
     baseURL: apiBaseUrl,
     headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: token
     }
 });
 
