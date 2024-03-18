@@ -41,7 +41,9 @@ export default function TicketDashboard() {
       <div className='dashboard'>
         <div className='left-section'>
           <div className='story-constainer'>
-            <div className='legend'>Under Development</div>
+            <div className='legend' style={{
+              height: '20px'
+            }}>Under Development</div>
 
             
             { 
@@ -63,7 +65,9 @@ export default function TicketDashboard() {
             }
 
 
-            <div>Under Development</div>
+            <div style={{
+              height: '600px'
+            }}>Under Development</div>
           </div>
         </div>
 

@@ -59,6 +59,16 @@
     }
 }
 
+.ant-layout.ant-layout-has-sider >.ant-layout {
+    display: flex;
+    overflow-y: scroll;
+}
+
+.ant-layout.ant-layout-has-sider >.ant-layout::-webkit-scrollbar {
+    background: transparent; /* Chrome/Safari/Webkit */
+    width: 0px;
+}
+
 .ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
     background-color: #1c83a5;
     color: rgba(255, 255, 255);

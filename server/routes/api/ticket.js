@@ -61,6 +61,7 @@ router.post('/add', auth.verifyJWT, async (req, res) => {
             supervisor,
             story,
             estimate,
+            dueDate,
             project, 
             workOrder
         } = req.body;
@@ -112,6 +113,7 @@ router.post('/add', auth.verifyJWT, async (req, res) => {
             assignee,
             supervisor,
             estimate,
+            dueDate,
             project, 
             workOrder,
             story

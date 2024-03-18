@@ -1,5 +1,5 @@
 import './App.scss'
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Layout from './components/Layout/Layout';
 import Home from './components/Home/Home';
@@ -19,29 +19,31 @@ import Login from './components/Login/Login';
 
 function App() {
   const isAuthenticated = useSelector(state => state.auth.authenticated);
+  
   return (
     <>
-      <Routes>
         {isAuthenticated ? (
-          <Route path='/' element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="/about" element={<Resume />} />
-            <Route path="/contact" element={<Contact />} />
+          <Routes>
+            <Route path='/' element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="/about" element={<Resume />} />
+              <Route path="/contact" element={<Contact />} />
 
-            <Route path="/project-management/scheduler" element={<Scheduler />} />
-            <Route path="/project-management/ticket" element={<Ticket />} />
+              <Route path="/project-management/scheduler" element={<Scheduler />} />
+              <Route path="/project-management/ticket" element={<Ticket />} />
 
-            <Route path="/pinata" element={<Pinata />} />
-            <Route path="/utility/timer" element={<Timer />} />
-            <Route path="/games/game-one" element={<GameOne />} />
-          </Route>
-        ) : (
-          <>
-            {/* <Route path="*" element={<Navigate replace to="/login" />} /> */}
+              <Route path="/pinata" element={<Pinata />} />
+              <Route path="/utility/timer" element={<Timer />} />
+              <Route path="/games/game-one" element={<GameOne />} />
+            </Route>
             <Route path="/login" element={<Login />} />
-          </>
+          </Routes>
+        ) : (
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="*" element={<Navigate replace to="/login" />} />
+          </Routes>
         )}
-      </Routes>
     </>
   )
 }

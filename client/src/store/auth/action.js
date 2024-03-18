@@ -16,13 +16,14 @@ export const loginUser = createAsyncThunk(
     }
 );
 
+const isUserAuthenticated = !!localStorage.getItem('token');
+
 const initialState = {
     user: null,
-    authenticated: false,
+    authenticated: isUserAuthenticated,
     status: 'idle',
     error: null
 }
-
 
 const authSlice = createSlice({
     name: 'auth',
@@ -30,8 +31,11 @@ const authSlice = createSlice({
     reducers: {
         logout: (state) => {
             localStorage.removeItem('token'); 
-            state.email = null;
-            state.role = null;
+            state.authenticated = false;
+        },
+        checkAuthentication: (state) => {
+            const token = localStorage.getItem('token');
+            state.authenticated = !!token;
         },
     },
     extraReducers: (builder) => {
@@ -43,7 +47,6 @@ const authSlice = createSlice({
                 state.status = 'succeeded';
                 state.user = action.payload.user;
                 state.authenticated = true;
-
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.status = 'failed';
@@ -52,5 +55,5 @@ const authSlice = createSlice({
     },
 })
 
-export const { logout } = authSlice.actions;
+export const { logout, checkAuthentication  } = authSlice.actions;
 export default authSlice.reducer;

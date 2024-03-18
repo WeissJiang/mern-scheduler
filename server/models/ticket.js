@@ -83,6 +83,7 @@ const TicketSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'WorkOrder'
     },
+    dueDate: Date,
     updated: Date,
     created: {
         type: Date,

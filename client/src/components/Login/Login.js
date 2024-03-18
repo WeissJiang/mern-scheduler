@@ -1,11 +1,13 @@
 import './Login.scss';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../../store/auth/action';
 import { setToast } from '../../store/toast/action';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+    const isAuthenticated = useSelector(state => state.auth.authenticated);
+    console.log(isAuthenticated)
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
@@ -18,7 +20,7 @@ export default function Login() {
         dispatch(loginUser({ email, password }))
             .then((res) => {
                 navigate('/');
-                console.log("res:", res)
+                console.log("res:", res);
             })
             .catch((e) => {
                 dispatch(setToast({ message: e.toString(), type: "error" }));

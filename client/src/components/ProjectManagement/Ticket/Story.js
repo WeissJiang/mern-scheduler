@@ -4,7 +4,7 @@ import Ticket from './Ticket';
 import { useDrop } from 'react-dnd';
 import { useDispatch } from 'react-redux';
 import { updateTicket } from '../../../store/tickets/action';
-import { Toast, ToastHeader, ToastBody } from 'reactstrap';
+import { setToast } from '../../../store/toast/action';
 
 export default function Story(props) {
   const dispatch = useDispatch();
@@ -23,10 +23,10 @@ export default function Story(props) {
 
         dispatch(updateTicket({id: item.id, data}))
           .then(() => {
-            alert("updated!")
+            dispatch(setToast({ message: "Ticket updated successfully!", type: "success" }));
           })
           .catch((e) => {
-            alert(e)
+            dispatch(setToast({ message: e.toString(), type: "error" }));
           });
       }
     },
@@ -38,7 +38,15 @@ export default function Story(props) {
         className='story'
         ref={dropRef}
       >
-        <div className='hover-story-title'> {story.name}</div>
+        <div className='hover-story-title'> 
+          {story.name} 
+          <div className='story-count'>
+            {story.tickets.length}
+          </div>
+          <div className='story-add'>
+            <i className="fa-solid fa-plus"></i>
+          </div>
+        </div>
         { 
           props.loadingTicket 
           ? <NormalSpinner color="#1c83a5" />
@@ -52,16 +60,6 @@ export default function Story(props) {
                 ))
             )
         }
-        <div className="p-3 bg-primary my-2 rounded">
-          <Toast>
-            <ToastHeader>
-              Reactstrap
-            </ToastHeader>
-            <ToastBody>
-              This is a toast on a primary background — check it out!
-            </ToastBody>
-          </Toast>
-        </div>
       </div>
   )
 }
