@@ -351,6 +351,7 @@ router.post('/hour/add', auth.verifyJWT, async (req, res) => {
         await existingTicket.save();
 
         res.status(200).json({
+            data: existingTicket,
             success: true,
             message: "Your ticket hour has been added successfully!",
         });
