@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, ButtonGroup } from 'reactstrap';
 import './style.scss';
 
 export default function RadioButtons({ items, rSelected, setRSelected}) {
-    console.log(`selected: ${rSelected}`);
+    // console.log(`selected: ${rSelected}`);
 
     return (
         <>
