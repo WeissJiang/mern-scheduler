@@ -1,8 +1,9 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './Ticket.scss';
 import Story from './Story';
 import ChatPanel from './ChatPanel';
 import NormalSpinner from '../../Common/NormalSpinner';
+import RadioButtons from '../../Common/RadioButtons';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectAllTickets, fetchTickets } from '../../../store/tickets/action'
 import { selectAllStories, fetchStories } from '../../../store/stories/action'
@@ -36,16 +37,41 @@ export default function TicketDashboard() {
     });
   }, [stories, tickets]); 
 
+
+
+  const displayOptions = [
+    {
+      id: "ticket-dashboard",
+      name: "dashboard"
+    },
+    {
+      id: "ticket-list",
+      name: "List"
+    }
+  ]
+
+  const [selectedFormat, setDisplayFormat] = useState(displayOptions[0].id);
+
+  const legendOptions = [selectedFormat];
+
   return (
     <>
       <div className='dashboard'>
         <div className='left-section'>
           <div className='story-constainer'>
-            <div className='legend' style={{
-              height: '20px'
-            }}>Under Development</div>
+            <div className='legend row'>
+              <RadioButtons
+                items={displayOptions}
+                rSelected={selectedFormat}
+                setRSelected={setDisplayFormat}
+              />
+              <div className='add-story'>Story +</div>
+              <div className='legend-options'>
+                Selected Features:
+                {selectedFormat}
+              </div>
+            </div>
 
-            
             { 
               loadingStory
               ? <NormalSpinner color="#1c83a5" />

@@ -1,0 +1,36 @@
+@import '../../App.scss';
+
+.btn-group {
+    background-color: var(--cloud-white);
+    box-shadow: inset 1px 2px 4px rgb(0, 0, 0, 0.2);
+    border-radius: 8px;
+
+    .btn-outline-secondary {
+        border: none;
+
+        &:not(:disabled):not(.disabled) {
+            &.active {
+                box-shadow: 0 0 10px var(--cloud-black);
+                color: var(--grey-1);
+                background-color: rgb(0, 0, 0, 0.1);
+            }
+        }
+
+        &:hover {
+            color: var(--grey-1);
+            background-color: rgb(0, 0, 0, 0.1);
+        }
+    }
+
+    &:first-child {
+        border-radius: 8px;
+    }
+
+    &:last-child {
+        border-radius: 8px;
+    }
+}
+
+.btn {
+    border-radius: 8px;
+}

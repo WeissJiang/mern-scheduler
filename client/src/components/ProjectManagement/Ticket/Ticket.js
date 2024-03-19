@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useDrag } from 'react-dnd';
-import { Tooltip } from 'reactstrap';
 import './Ticket.scss';
 
 export default function Ticket(props) {
@@ -21,11 +20,8 @@ export default function Ticket(props) {
         },
     }));
 
-    const [tooltipOpen, setTooltipOpen] = useState(false);
-    const tooltipToggle = () => setTooltipOpen(!tooltipOpen);
-
     const openTicketDetail = () => {
-        console.log('click to open modal')
+        console.log('click to open modal');
     }
 
     const getDateString = (date) => {
@@ -61,7 +57,7 @@ export default function Ticket(props) {
                 <div className='ticket-header'>
                     { getDateString(ticket.dueDate) }
                     <div className='ticket-edit'>
-                        <i className="fa-solid fa-ellipsis-vertical"></i>
+                        <i className="fa-solid fa-pen"></i>
                     </div>
                 </div>
 
@@ -90,7 +86,7 @@ export default function Ticket(props) {
 
                 
             </div>
-            <Tooltip
+            {/* <Tooltip
                 placement="right"
                 isOpen={tooltipOpen}
                 target="tooltip"
@@ -100,7 +96,7 @@ export default function Ticket(props) {
                     - Drag to change story <br/>
                     - Click to open detail`
                 </div>
-            </Tooltip>
+            </Tooltip> */}
         </>
     )
 }

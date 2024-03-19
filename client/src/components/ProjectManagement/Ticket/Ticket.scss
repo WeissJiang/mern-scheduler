@@ -8,12 +8,38 @@
     
     .left-section {
         width: 70%;
-        // border: 3px dotted var(--cloud-blue);
     }
 
     .right-section {
         width: 30%;
-        // border: 3px dotted var(--cloud-blue);
+    }
+}
+
+.legend {
+    width: 100%;
+    height: 50px;
+    height: fit-content;
+    margin: 24px 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .add-story {
+        margin: 0 20px;
+        padding: 0 4px;
+        line-height: 36px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px var(--cloud-black);
+        color: var(--grey-1);
+        background-color: rgb(0, 0, 0, 0.1);
+        cursor: pointer;
+    }
+
+    .legend-options {
+        width: 100%;
+        margin: 24px 0;
+        color: var(--grey-1);
+        font-size: 12px;
     }
 }
 
@@ -23,7 +49,7 @@
 
     .story-scroller{
         margin: 20px 0;
-        overflow: auto;
+        overflow-x: auto;
         white-space: nowrap;
         gap: 10px;
         padding: 24px 0;
@@ -82,20 +108,26 @@
 
     .story-scroller::-webkit-scrollbar {
         background: transparent; /* Chrome/Safari/Webkit */
-        width: 0px;
+        height: 16px;
     }
+
+    .story-scroller::-webkit-scrollbar-thumb {
+        background-color: var(--cloud-white);
+        border-radius: 8px;
+        box-shadow: inset 1px 2px 4px rgb(0, 0, 0, 0.2);
+    }
+      
 }
 
 
 .ticket-container {
-    width: 240px;
+    width: 280px;
     height: 210px;
     margin: 6px 0;
     cursor: pointer;
     border-radius: 20px;
     background-color: var(--cloud-white);
     padding: 10px;
-
     box-shadow: inset 1px 2px 5px rgb(0, 0, 0, 0.1), inset -1px -2px 5px rgb(255, 255, 255, 1), 7px 7px 5px rgb(0, 0, 0, 0.05), 7px 5px 7px rgb(0, 0, 0, 0.25);
 
     .ticket-header {
@@ -230,3 +262,12 @@
     border: 1px dashed var(--cloud-white);
 }
 
+@media (max-width: 680px) {
+    .dashboard .left-section {
+        width: 100%;
+    }
+
+    .dashboard .right-section {
+        display: none;
+    }
+}
