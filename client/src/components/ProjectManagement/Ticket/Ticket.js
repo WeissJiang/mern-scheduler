@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDrag } from 'react-dnd';
 import './Ticket.scss';
+import TicketDetail from './TicketDetail';
 
 export default function Ticket(props) {
     const { ticket } = props;
@@ -20,11 +21,7 @@ export default function Ticket(props) {
         },
     }));
 
-    const openTicketDetail = () => {
-        console.log('click to open modal');
-    }
-
-    const getDateString = (date) => {
+    const getDateDiv = (date) => {
         if(!date) { 
             return <div></div>;
         }
@@ -45,6 +42,16 @@ export default function Ticket(props) {
         return dueDiv;
     }
 
+    /**
+     * ticket detail modal
+     */
+
+    const [modal, setModal] = useState(false);
+    const openTicketDetail = () => {
+        console.log('click to open modal');
+        setModal((modal) => !modal);
+    }
+
     return (
         <>
             <div 
@@ -55,7 +62,7 @@ export default function Ticket(props) {
                 onClick={openTicketDetail}
             >
                 <div className='ticket-header'>
-                    { getDateString(ticket.dueDate) }
+                    { getDateDiv(ticket.dueDate) }
                     <div className='ticket-edit'>
                         <i className="fa-solid fa-pen"></i>
                     </div>
@@ -83,20 +90,12 @@ export default function Ticket(props) {
                         <div className='assignee'>A</div>
                     </div>
                 </div>
-
-                
             </div>
-            {/* <Tooltip
-                placement="right"
-                isOpen={tooltipOpen}
-                target="tooltip"
-                toggle={tooltipToggle}
-            >
-                <div className='custom-tooltip'>
-                    - Drag to change story <br/>
-                    - Click to open detail`
-                </div>
-            </Tooltip> */}
+            <TicketDetail
+                modal={modal}
+                setModal={setModal}
+                ticket={ticket}
+            />
         </>
     )
 }

@@ -38,6 +38,18 @@ export const updateTicket = createAsyncThunk(
     }
 );
 
+export const addHours = createAsyncThunk(
+    'tickets/addHours',
+    async ({ data }, { rejectWithValue }) => {
+        try {
+            const response = await apiInstance.post(`/ticket/hour/add`, data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response ? error.response.data : error.message);
+        }
+    }
+);
+
 const ticketsSlice = createSlice({
     name: 'tickets',
     initialState,
@@ -75,6 +87,28 @@ const ticketsSlice = createSlice({
             // Handle the case where the update operation fails, for example by setting an error message
             state.updateStatus = 'failed';
             state.error = action.error.message; // Or another piece of state dedicated to update errors
+        })
+
+        // Add your updateTicket cases here
+        .addCase(addHours.pending, (state) => {
+            // Optionally, you could update the state to reflect the loading status of the update operation
+            state.updateStatus = 'loading';
+        })
+        .addCase(addHours.fulfilled, (state, action) => {
+            const index = state.tickets.findIndex(ticket => {
+                return ticket._id === action.payload.data._id;
+            });
+            if (index !== -1) {
+                // Replace the old ticket with the updated one in the state
+                state.tickets[index] = action.payload.data;
+            }
+            // Optionally, reset/update the update status
+            state.updateStatus = 'succeeded';
+        })
+        .addCase(addHours.rejected, (state, action) => {
+            // Handle the case where the update operation fails, for example by setting an error message
+            state.updateStatus = 'failed';
+            state.error = action.error.message; // Or another piece of state dedicated to update errors
         });
     }
 })
@@ -82,4 +116,4 @@ const ticketsSlice = createSlice({
 export default ticketsSlice.reducer;
 
 export const selectAllTickets = state => state.tickets.tickets;
-export const selectTicketById = (state, id) => state.tickets.find(t => t._id === id);
+export const selectTicketById = (state, id) => state.tickets.tickets.find(t => t._id === id);
