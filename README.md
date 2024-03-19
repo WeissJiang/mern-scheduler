@@ -7,6 +7,10 @@ Using Reactjs, Nodejs(Expressjs) and MangoDB(Mongoose)
 ### Ticket Section (to show water drop CSS effect)
 ![image](https://github.com/WeissJiang/mern-scheduler/assets/55972476/5ee76b27-637a-49dd-8408-615dd221bbdf)
 
+#### Able to scroll the story area to view all the stories and tickets
+![image](https://github.com/WeissJiang/mern-scheduler/assets/55972476/ce7c3666-19de-4e53-81df-b695b682ef76)
+
+
 #### Able to drag a ticket and drop it into a different story
 ![image](https://github.com/WeissJiang/mern-scheduler/assets/55972476/b32152bc-c44c-43bf-b3b0-78fb25ce8068)
 
@@ -15,7 +19,6 @@ Using Reactjs, Nodejs(Expressjs) and MangoDB(Mongoose)
 
 #### Able to expand and collapse vertical nav and chat panel
 ![image](https://github.com/WeissJiang/mern-scheduler/assets/55972476/2fb4a239-4368-491d-b403-95e52e98b122)
-
 
 #### responsive web design
 ![image](https://github.com/WeissJiang/mern-scheduler/assets/55972476/4ffc8f60-6da3-4a41-a3c7-eaf50cccf401)
