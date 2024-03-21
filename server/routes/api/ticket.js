@@ -323,6 +323,58 @@ router.delete('/:id/comment/:commentId', auth.verifyJWT, async (req, res) => {
 /**
  * ticket hours crud
  */
+router.get('/hours/getAll', auth.verifyJWT, async (req, res) => {
+    try {
+        const { starttime, endtime } = req.query;
+
+        if (!starttime || !endtime) {
+            return res.status(400).json({ error: 'Start time and end time are required.' });
+        }
+
+        const startDate = new Date(parseInt(starttime));
+        const endDate = new Date(parseInt(endtime));
+
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            return res.status(400).json({ error: 'Invalid start time or end time.' });
+        }
+
+        const tickets = await Ticket.Ticket.aggregate([
+            { $unwind: '$hours' }, // 展开 hours 数组
+            { $match: { 'hours.loggedDate': { $gte: startDate, $lte: endDate } } }, 
+            {
+                $group: {
+                    _id: '$_id', // 根据 Ticket 文档的 ID 分组
+                    title: { $first: '$title' }, // 保留 Ticket 文档的其他字段（如果需要）
+                    hours: { $push: '$hours' } // 将所有符合条件的 hours 放入一个数组
+                }
+            }
+        ]);
+        // const tickets = await Ticket.Ticket.aggregate([
+        //     { $unwind: '$hours' }, // 展开 hours 数组
+        //     { $match: { 'hours.loggedDate': { $gte: startDate, $lte: endDate } } }, 
+        //     {
+        //         $group: {
+        //             _id: '$_id', // 根据 Ticket 文档的 ID 分组
+        //             title: { $first: '$title' }, // 保留 Ticket 文档的其他字段（如果需要）
+        //             hours: { $push: '$hours' } // 将所有符合条件的 hours 放入一个数组
+        //         }
+        //     }
+        // ]);
+
+        // const ticketHoursDoc = tickets.flatMap(ticket => 
+        //     ticket.hours.filter(hour => 
+        //         hour.loggedDate >= startDate && hour.loggedDate <= endDate
+        //     )
+        // );
+
+        res.status(200).json({
+            data: tickets
+        });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+
 router.post('/hour/add', auth.verifyJWT, async (req, res) => {
     try {
         const { ticket, time, user } = req.body;
@@ -365,7 +417,7 @@ router.patch('/:id/hour/:hourId', auth.verifyJWT, async (req, res) => {
         const ticketId = req.params.id;
         const hourId = req.params.hourId;
 
-        const { time, note } = req.body;
+        const { time, note, loggedDate } = req.body;
 
         const existingTicket = await Ticket.Ticket.findOne({ _id: ticketId });
         if (!existingTicket) {
@@ -377,6 +429,7 @@ router.patch('/:id/hour/:hourId', auth.verifyJWT, async (req, res) => {
         const hour = existingTicket.hours.id(hourId);
         hour.time = time;
         hour.note = note;
+        hour.loggedDate = loggedDate;
         hour.updated = Date.now();
         await existingTicket.save();
 

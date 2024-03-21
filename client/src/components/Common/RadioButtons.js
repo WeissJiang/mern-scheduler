@@ -4,7 +4,6 @@ import './style.scss';
 
 export default function RadioButtons({ items, rSelected, setRSelected}) {
     // console.log(`selected: ${rSelected}`);
-
     return (
         <>
             <ButtonGroup>

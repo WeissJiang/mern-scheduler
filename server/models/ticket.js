@@ -19,6 +19,10 @@ const TicketHourSchema = new Schema({
         ref: 'User',
         immutable: true
     },
+    loggedDate: {
+        type: Date,
+        default: Date.now
+    },
     updated: Date,
     created: {
         type: Date,
