@@ -349,26 +349,16 @@ router.get('/hours/getAll', auth.verifyJWT, async (req, res) => {
                 }
             }
         ]);
-        // const tickets = await Ticket.Ticket.aggregate([
-        //     { $unwind: '$hours' }, // 展开 hours 数组
-        //     { $match: { 'hours.loggedDate': { $gte: startDate, $lte: endDate } } }, 
-        //     {
-        //         $group: {
-        //             _id: '$_id', // 根据 Ticket 文档的 ID 分组
-        //             title: { $first: '$title' }, // 保留 Ticket 文档的其他字段（如果需要）
-        //             hours: { $push: '$hours' } // 将所有符合条件的 hours 放入一个数组
-        //         }
-        //     }
-        // ]);
 
-        // const ticketHoursDoc = tickets.flatMap(ticket => 
-        //     ticket.hours.filter(hour => 
-        //         hour.loggedDate >= startDate && hour.loggedDate <= endDate
-        //     )
-        // );
+        const ticketHoursDoc = tickets.flatMap(ticket => 
+            ticket.hours.filter(hour => 
+                hour.loggedDate >= startDate && hour.loggedDate <= endDate
+            )
+        );
 
         res.status(200).json({
-            data: tickets
+            data: ticketHoursDoc,
+            count: ticketHoursDoc.length
         });
     } catch (error) {
         res.status(400).send(error);
